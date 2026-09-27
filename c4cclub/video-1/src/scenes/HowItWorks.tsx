@@ -13,16 +13,16 @@ const Y = CONFIG.yourApp;
 const [STEP1, STEP2, STEP3] = S.steps;
 
 // ── Schedule (scene-local frames), computed once ──────────────────────────────
-const step2Start = sec(STEP2.start);
-const step3Start = sec(STEP3.start);
+export const step2Start = sec(STEP2.start);
+export const step3Start = sec(STEP3.start);
 
-const OUTBOUND: Flight[] = S.step2.targets.map((to, i) => ({
+export const OUTBOUND: Flight[] = S.step2.targets.map((to, i) => ({
 	from: 'you',
 	to,
 	start: step2Start + sec(S.step2.at + i * S.step2.stagger),
 	dur: sec(S.step2.flightDur),
 }));
-const INBOUND: Flight[] = S.step3.sources.map((from, i) => ({
+export const INBOUND: Flight[] = S.step3.sources.map((from, i) => ({
 	from,
 	to: 'you',
 	start: step3Start + sec(S.step3.at + i * S.step3.stagger),
@@ -36,8 +36,8 @@ const CREDIT_EVENTS = [
 	...INBOUND.map((f) => ({at: f.start + f.dur, delta: S.counter.gainPerClick})),
 ];
 
-const POPULATE_AT = sec(STEP1.start + S.step1.populateAt);
-const SNIPPET_AT = step3Start + sec(S.step3.snippetAt);
+export const POPULATE_AT = sec(STEP1.start + S.step1.populateAt);
+export const SNIPPET_AT = step3Start + sec(S.step3.snippetAt);
 
 export const HowItWorks: React.FC = () => {
 	const frame = useCurrentFrame();

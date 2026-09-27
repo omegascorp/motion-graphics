@@ -1,5 +1,6 @@
 import React from 'react';
 import {AbsoluteFill, Sequence} from 'remotion';
+import {Soundtrack} from './audio/Soundtrack';
 import {CONFIG, sec} from './config';
 import {Bouncer} from './scenes/Bouncer';
 import {CTA} from './scenes/CTA';
@@ -27,5 +28,6 @@ export const C4CPromo: React.FC = () => (
 				</Sequence>
 			);
 		})}
+		<Soundtrack />
 	</AbsoluteFill>
 );

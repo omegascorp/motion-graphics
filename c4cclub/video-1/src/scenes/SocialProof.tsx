@@ -9,9 +9,9 @@ import {Camera, Network} from '../network/Network';
 const B = CONFIG.brand;
 const S = CONFIG.scenes.social;
 
-const nodeEnter: Record<string, number> = {};
+export const extraEnter: Record<string, number> = {};
 EXTRA_NODES.forEach((id, i) => {
-	nodeEnter[id] = sec(S.extrasAt + i * S.extraStagger);
+	extraEnter[id] = sec(S.extrasAt + i * S.extraStagger);
 });
 const edgeEnter: Record<string, number> = {};
 NETWORK.edges
@@ -36,7 +36,7 @@ export const DenseNetwork: React.FC<{frame: number; camera: Camera; style?: Reac
 		frame={frame}
 		camera={camera}
 		nodes={ALL_NODES}
-		nodeEnter={nodeEnter}
+		nodeEnter={extraEnter}
 		edgeEnter={edgeEnter}
 		edgeDraw={sec(S.lineDraw)}
 		flights={SOCIAL_FLIGHTS}

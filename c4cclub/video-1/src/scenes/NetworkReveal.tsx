@@ -10,11 +10,11 @@ const B = CONFIG.brand;
 const S = CONFIG.scenes.network;
 
 // Entrance schedule (frames), computed once.
-const nodeEnter: Record<string, number> = {you: sec(S.youAt)};
+export const nodeEnter: Record<string, number> = {you: sec(S.youAt)};
 BASE_NODES.filter((id) => id !== 'you').forEach((id, i) => {
 	nodeEnter[id] = sec(S.ringAt + i * S.ringStagger);
 });
-const edgeEnter: Record<string, number> = {};
+export const edgeEnter: Record<string, number> = {};
 NETWORK.edges
 	.filter((e) => !e.extra)
 	.forEach((e, i) => {

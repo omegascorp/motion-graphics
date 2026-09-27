@@ -8,6 +8,14 @@ const B = CONFIG.brand;
 const S = CONFIG.scenes.bouncer;
 const toneColor = (t: Tone) => B[t];
 
+/** Scene-local frames for a visitor row: slide in, score fill, status pill, shake. */
+export const rowTimes = (index: number) => {
+	const inAt = sec(S.rowsAt + index * S.rowStagger);
+	const fillAt = inAt + sec(S.fillDelay);
+	const statusAt = fillAt + sec(S.fillDur);
+	return {inAt, fillAt, statusAt, shakeAt: statusAt + sec(0.1)};
+};
+
 export const Bouncer: React.FC = () => {
 	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
@@ -74,15 +82,12 @@ const VisitorRow: React.FC<{index: number; frame: number}> = ({index, frame}) =>
 	const {fps} = useVideoConfig();
 	const row = S.rows[index];
 	const color = toneColor(row.tone);
-	const inAt = sec(S.rowsAt + index * S.rowStagger);
+	const {inAt, fillAt, statusAt, shakeAt} = rowTimes(index);
 	const enter = arrive(frame, inAt, fps);
-	const fillAt = inAt + sec(S.fillDelay);
 	const fill = progress(frame, fillAt, sec(S.fillDur));
-	const statusAt = fillAt + sec(S.fillDur);
 	const status = arrive(frame, statusAt, fps);
 
 	// Rejected row: 2px shake, then dim.
-	const shakeAt = statusAt + sec(0.1);
 	const d = frame - shakeAt;
 	const shaking = row.rejected && d >= 0 && d <= sec(S.shakeDur);
 	const shake = shaking ? Math.sin(d * Math.PI * 0.75) * S.shakePx : 0;

@@ -7,7 +7,8 @@
     "dev": "remotion studio",
     "render": "remotion render C4CPromo out/c4c-promo.mp4",
     "still": "remotion still C4CPromo out/still.png",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "audio": "python3 scripts/make-audio.py"
   },
   "dependencies": {
     "@remotion/cli": "4.0.529",
