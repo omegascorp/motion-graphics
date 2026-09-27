@@ -1,6 +1,8 @@
 import React from 'react';
 import {CONFIG} from '../config';
 import {MONO, SANS} from '../fonts';
+import {alpha} from '../motion';
+import {raised} from '../style';
 
 const B = CONFIG.brand;
 
@@ -12,28 +14,31 @@ export const BrowserCard: React.FC<{
 	icon: React.ReactNode;
 	name: React.ReactNode;
 	borderColor: string;
+	/** 0 → 1: coloured glow around the card (arrivals, focus). */
+	glow?: number;
+	glowColor?: string;
 	footer?: React.ReactNode;
-}> = ({w, h, domain, icon, name, borderColor, footer}) => {
+}> = ({w, h, domain, icon, name, borderColor, glow = 0, glowColor = B.accent, footer}) => {
 	const bar = Math.round(h * 0.18);
 	return (
 		<div
 			style={{
 				width: w,
 				height: h,
-				borderRadius: 14,
-				background: B.surface,
-				border: `2px solid ${borderColor}`,
-				boxShadow: '0 10px 30px rgba(0,0,0,0.35)',
+				borderRadius: 16,
+				border: `1.5px solid ${borderColor}`,
 				overflow: 'hidden',
 				display: 'flex',
 				flexDirection: 'column',
 				fontFamily: SANS,
+				...raised(glowColor, glow),
 			}}
 		>
 			<div
 				style={{
 					height: bar,
-					background: B.surfaceHi,
+					background: alpha('#FFFFFF', 0.035),
+					borderBottom: `1px solid ${alpha('#FFFFFF', 0.05)}`,
 					display: 'flex',
 					alignItems: 'center',
 					gap: 5,
@@ -41,7 +46,7 @@ export const BrowserCard: React.FC<{
 				}}
 			>
 				{[0, 1, 2].map((i) => (
-					<div key={i} style={{width: 7, height: 7, borderRadius: 4, background: B.line}} />
+					<div key={i} style={{width: 7, height: 7, borderRadius: 4, background: B.lineHi}} />
 				))}
 				<div
 					style={{
@@ -49,7 +54,7 @@ export const BrowserCard: React.FC<{
 						flex: 1,
 						height: bar - 10,
 						borderRadius: 6,
-						background: B.surface,
+						background: alpha(B.black, 0.45),
 						color: B.muted,
 						fontFamily: MONO,
 						fontSize: 11,
@@ -66,7 +71,9 @@ export const BrowserCard: React.FC<{
 			<div style={{flex: 1, display: 'flex', alignItems: 'center', gap: 12, padding: '0 14px'}}>
 				{icon}
 				<div style={{flex: 1, display: 'flex', flexDirection: 'column', gap: 7}}>
-					<div style={{color: B.text, fontWeight: 700, fontSize: 18, lineHeight: 1.1, height: 20}}>{name}</div>
+					<div style={{color: B.text, fontWeight: 700, fontSize: 19, lineHeight: 1.1, height: 21, letterSpacing: '-0.01em'}}>
+						{name}
+					</div>
 					<div style={{height: 6, width: '85%', borderRadius: 3, background: B.line}} />
 					<div style={{height: 6, width: '55%', borderRadius: 3, background: B.line}} />
 				</div>

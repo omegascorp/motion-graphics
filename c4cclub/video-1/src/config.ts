@@ -11,24 +11,57 @@ export const sec = (s: number) => Math.round(s * FPS);
 export const CONFIG = {
 	video: {id: 'C4CPromo', width: 1920, height: 1080, fps: FPS, durationInSeconds: 30},
 
-	// Brand placeholders — the brief left these as [#HEX]. Swap in the real values.
-	// Font is loaded in src/fonts.ts (swap the @remotion/google-fonts import there).
+	// Brand: c4c.club dark theme (src/app/globals.css in the app), converted from oklch.
+	// Fonts are loaded in src/fonts.ts (Bricolage Grotesque display, Figtree text).
 	brand: {
-		bg: '#101217',
-		accent: '#FF7A45',
-		text: '#F5F1EA',
-		muted: '#8C919C',
-		// Derived UI tones
-		black: '#000000',
-		surface: '#191C23',
-		surfaceHi: '#222631',
-		line: '#2D323D',
-		doorBg: '#07080B',
-		adBg: '#F5F1EA',
-		adText: '#15171C',
-		green: '#3DD68C',
-		amber: '#F5B544',
-		red: '#FF5C5C',
+		bg: '#0B0A16',
+		black: '#05040C',
+		surface: '#161524',
+		surfaceHi: '#1D1C2D',
+		line: '#2A2842',
+		lineHi: '#3D3A63',
+		text: '#F3F3F9',
+		muted: '#A0A1B6',
+		// Brand gradient, purple → blue. `fill*` stops keep white text above 5:1.
+		purple: '#6A3FD0',
+		violet: '#5953CF',
+		blue: '#4E80F5',
+		fillFrom: '#492490',
+		fillTo: '#3464DB',
+		textFrom: '#AE99FB',
+		textTo: '#8DBBFF',
+		accent: '#7591FE', // primary: lines, focus, "your app"
+		pop: '#FF8F49', // warm accent: reserved for credits and moments of delight
+		doorBg: '#07060F',
+		adBg: '#F3F3F9',
+		adText: '#14132A',
+		green: '#43BE79',
+		amber: '#F6B044',
+		red: '#FF6467',
+	},
+
+	// Continuous backdrop behind every scene. Glow keyframes are global seconds.
+	backdrop: {
+		glow: [
+			{at: 0, v: 0.25},
+			{at: 3.6, v: 0.45},
+			{at: 5, v: 1},
+			{at: 17, v: 0.55},
+			{at: 23, v: 1},
+			{at: 27.4, v: 1.35},
+		],
+		grid: {gap: 44, dot: 1.4, opacity: 0.35},
+		grain: 0.07,
+		vignette: 0.75,
+	},
+
+	// Scene-to-scene transitions. `iris`: the incoming scene opens as a circle with a
+	// glowing edge from `origin` (screen px) while the outgoing one sinks back.
+	transitions: {
+		dur: 0.6,
+		sink: {scale: 0.92, dim: 0.35},
+		bouncer: {type: 'iris', origin: {x: 1320, y: 560}},
+		social: {type: 'iris', origin: {x: 960, y: 540}},
 	},
 
 	motion: {
@@ -80,8 +113,8 @@ export const CONFIG = {
 	network: {
 		center: {x: 960, y: 540},
 		ring: {rx: 520, ry: 330},
-		card: {w: 210, h: 150},
-		youCard: {w: 250, h: 176},
+		card: {w: 232, h: 162},
+		youCard: {w: 280, h: 196},
 		adCard: {maxW: 400},
 		curvature: 0.14, // control-point offset as a fraction of edge length
 		// angle: degrees, 0 = right, 90 = down. radius: multiplier on ring.
@@ -107,6 +140,11 @@ export const CONFIG = {
 		],
 		pulse: {rise: 0.1, fall: 0.55, ringScale: 1.3, ringOpacity: 0.5, cardScale: 0.06},
 		flightExit: 0.2, // shrink-in at the target
+		packets: {perEdge: 2, speed: 150, radius: 3.2}, // ambient traffic on drawn lines (px/s)
+		trail: 0.32, // comet trail length, as a fraction of the flight
+		burst: {count: 10, distance: 90, dur: 0.6},
+		drift: {x: 10, y: 6, period: 9}, // slow handheld float, px and seconds
+		perspective: 1800,
 	},
 
 	scenes: {
@@ -119,14 +157,23 @@ export const CONFIG = {
 			wordStagger: 0.28,
 			line2At: 2.55,
 			line2Fade: 0.5,
+			accentWord: 'first.', // gradient + underline
+			line2Accent: 'favor', // warm pop colour
+			sweepAt: 1.9,
+			sweepDur: 0.9,
+			underlineAt: 1.75,
+			underlineDur: 0.5,
+			drift: 0.04, // slow push-in over the scene
 			fadeOutAt: 3.6, // after the 0.5s hold
-			fadeOutDur: 0.35,
+			fadeOutDur: 0.4,
+			exitScale: 1.7,
+			exitBlur: 18,
 		},
 
 		network: {
 			start: 4,
 			duration: 5,
-			camera: {fromScale: 2.6, toScale: 1, pullDur: 2.0},
+			camera: {fromScale: 2.6, toScale: 1, pullDur: 2.2, fromTilt: 34, fromRoll: -8},
 			youAt: 0.1,
 			ringAt: 0.45,
 			ringStagger: 0.12,
@@ -166,8 +213,11 @@ export const CONFIG = {
 			start: 17,
 			duration: 6,
 			headline: 'A club only works if nobody games it.',
+			headlineAccent: ['games', 'it.'],
 			kicker: 'Door check',
-			panel: {w: 1320, h: 720},
+			columns: ['Visitor', 'Risk score', 'Verdict'],
+			meterTicks: 24,
+			panel: {w: 1500, h: 800},
 			panelAt: 0,
 			headlineAt: 0.2,
 			rowsAt: 0.9,
@@ -188,21 +238,24 @@ export const CONFIG = {
 		social: {
 			start: 23,
 			duration: 4,
-			camera: {fromScale: 0.95, toScale: 0.86, y: -30},
+			camera: {fromScale: 0.95, toScale: 0.84, y: -30, toTilt: 14, toRoll: -3},
 			extrasAt: 0,
 			extraStagger: 0.15,
 			edgesAt: 0.25,
 			lineStagger: 0.08,
 			lineDraw: 0.5,
 			caption: 'Founders promoting founders.',
+			captionAccent: ['founders.'],
 			captionAt: 0.7,
+			captionStagger: 0.12,
+			captionSweep: [1.4, 2.4],
 			flights: {seed: 7, count: 46, from: 0, to: 6.4, minDur: 0.85, maxDur: 1.25, extrasFrom: 0.8},
 		},
 
 		cta: {
 			start: 27,
 			duration: 3,
-			camera: {toScale: 0.74},
+			camera: {toScale: 0.7, toTilt: 32},
 			recedeDur: 0.9,
 			blurTo: 14,
 			dimTo: 0.35,
@@ -210,6 +263,10 @@ export const CONFIG = {
 			wordmarkWidth: 560,
 			taglineAt: 0.4,
 			tagline: 'Your first ad is on the house.',
+			taglineAccent: ['house.'],
+			shineAt: 0.9, // light sweep across the wordmark
+			shineDur: 0.8,
+			buttonShineAt: 1.5,
 			buttonAt: 0.6,
 			button: 'Launch your free ad',
 			urlAt: 0.75,

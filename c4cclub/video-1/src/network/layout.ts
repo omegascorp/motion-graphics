@@ -28,7 +28,8 @@ export type Edge = {
 	extra: boolean;
 };
 
-export type Flight = {from: NodeId; to: NodeId; start: number; dur: number};
+/** `tone` colours the comet trail: brand light for ads, warm pop for paid-out clicks. */
+export type Flight = {from: NodeId; to: NodeId; start: number; dur: number; tone?: 'brand' | 'pop'};
 
 export const edgeKey = (a: NodeId, b: NodeId) => [a, b].sort().join('~');
 
@@ -107,6 +108,13 @@ export const ALL_NODES: NodeId[] = ['you', ...CONFIG.network.sites.map((s) => s.
 export const EXTRA_NODES: NodeId[] = ALL_NODES.filter((id) => !BASE_NODES.includes(id));
 
 /** Point on the edge between `from` and `to` at progress t (0 = from, 1 = to). */
+/** The edge a flight travels on, and whether it runs against the edge's a → b orientation. */
+export const edgeOfFlight = (from: NodeId, to: NodeId) => {
+	const e = NETWORK.edgeByKey[edgeKey(from, to)];
+	if (!e) throw new Error(`No edge between ${from} and ${to}`);
+	return {edge: e, reversed: e.a !== from};
+};
+
 export const pointOnFlight = (from: NodeId, to: NodeId, t: number) => {
 	const e = NETWORK.edgeByKey[edgeKey(from, to)];
 	if (!e) throw new Error(`No edge between ${from} and ${to}`);

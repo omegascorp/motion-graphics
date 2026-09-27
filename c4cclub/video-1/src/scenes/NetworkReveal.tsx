@@ -1,7 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {CONFIG, sec} from '../config';
-import {SANS} from '../fonts';
+import {DISPLAY} from '../fonts';
 import {arrive, lerp, progress} from '../motion';
 import {BASE_NODES, NETWORK} from '../network/layout';
 import {Network} from '../network/Network';
@@ -28,10 +28,17 @@ export const NetworkReveal: React.FC = () => {
 	const caption = arrive(frame, sec(S.captionAt), fps);
 
 	return (
-		<AbsoluteFill style={{background: B.bg}}>
+		<AbsoluteFill>
 			<Network
 				frame={frame}
-				camera={{scale: lerp(S.camera.fromScale, S.camera.toScale, pull), x: 0, y: 0}}
+				clock={sec(S.start) + frame}
+				camera={{
+					scale: lerp(S.camera.fromScale, S.camera.toScale, pull),
+					x: 0,
+					y: 0,
+					tilt: lerp(S.camera.fromTilt, 0, pull),
+					roll: lerp(S.camera.fromRoll, 0, pull),
+				}}
 				nodes={BASE_NODES}
 				nodeEnter={nodeEnter}
 				edgeEnter={edgeEnter}
@@ -45,10 +52,11 @@ export const NetworkReveal: React.FC = () => {
 					bottom: 48,
 					width: '100%',
 					textAlign: 'center',
-					fontFamily: SANS,
-					fontSize: 34,
-					fontWeight: 500,
-					color: B.muted,
+					fontFamily: DISPLAY,
+					fontSize: 44,
+					fontWeight: 700,
+					letterSpacing: '-0.02em',
+					color: B.text,
 					opacity: Math.min(1, caption),
 					transform: `translateY(${interpolate(caption, [0, 1], [16, 0])}px)`,
 				}}

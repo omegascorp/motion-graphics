@@ -1,8 +1,10 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, Sequence, useCurrentFrame, useVideoConfig} from 'remotion';
 import {CONFIG, sec} from '../config';
-import {MONO, SANS} from '../fonts';
-import {arrive, lerp, progress} from '../motion';
+import {DISPLAY, MONO, SANS} from '../fonts';
+import {alpha, arrive, lerp, progress} from '../motion';
+import {brandGlow, gradientText, raised} from '../style';
+import {CreditCoin, coinFlip} from '../components/CreditCoin';
 import {SiteIcon} from '../components/SiteIcon';
 import {BASE_NODES, Flight} from '../network/layout';
 import {Gain, Network} from '../network/Network';
@@ -27,6 +29,7 @@ export const INBOUND: Flight[] = S.step3.sources.map((from, i) => ({
 	to: 'you',
 	start: step3Start + sec(S.step3.at + i * S.step3.stagger),
 	dur: sec(S.step3.flightDur),
+	tone: 'pop' as const,
 }));
 const FLIGHTS = [...OUTBOUND, ...INBOUND];
 const GAINS: Gain[] = INBOUND.map((f) => ({at: f.start + f.dur, text: S.step3.gainLabel}));
@@ -45,9 +48,10 @@ export const HowItWorks: React.FC = () => {
 	const move = progress(frame, 0, sec(S.camera.moveDur));
 
 	return (
-		<AbsoluteFill style={{background: B.bg}}>
+		<AbsoluteFill>
 			<Network
 				frame={frame}
+				clock={sec(S.start) + frame}
 				camera={{scale: lerp(1, S.camera.scale, move), x: lerp(0, S.camera.x, move), y: lerp(0, S.camera.y, move)}}
 				nodes={BASE_NODES}
 				flights={FLIGHTS}
@@ -62,6 +66,7 @@ export const HowItWorks: React.FC = () => {
 				</Sequence>
 			))}
 
+			<StepProgress frame={frame} />
 			<Counter frame={frame} />
 		</AbsoluteFill>
 	);
@@ -90,12 +95,15 @@ const StepPanel: React.FC<{index: number}> = ({index}) => {
 		>
 			<div
 				style={{
-					fontSize: 240,
-					fontWeight: 700,
+					fontFamily: DISPLAY,
+					fontSize: 250,
+					fontWeight: 800,
 					lineHeight: 0.85,
-					color: B.accent,
+					letterSpacing: '-0.04em',
 					opacity: Math.min(1, numIn),
-					transform: `translateX(${interpolate(numIn, [0, 1], [-40, 0])}px)`,
+					filter: `blur(${interpolate(numIn, [0, 1], [12, 0], {extrapolateRight: 'clamp'})}px)`,
+					transform: `translateX(${interpolate(numIn, [0, 1], [-60, 0])}px)`,
+					...gradientText(interpolate(frame, [sec(0.3), sec(1.2)], [0, 1])),
 				}}
 			>
 				{step.n}
@@ -103,10 +111,11 @@ const StepPanel: React.FC<{index: number}> = ({index}) => {
 			<div
 				style={{
 					marginTop: 28,
-					fontSize: 68,
-					fontWeight: 700,
-					lineHeight: 1.05,
-					letterSpacing: -1,
+					fontFamily: DISPLAY,
+					fontSize: 74,
+					fontWeight: 800,
+					lineHeight: 1.02,
+					letterSpacing: '-0.03em',
 					color: B.text,
 					opacity: Math.min(1, titleIn),
 					transform: `translateY(${interpolate(titleIn, [0, 1], [20, 0])}px)`,
@@ -117,8 +126,8 @@ const StepPanel: React.FC<{index: number}> = ({index}) => {
 			{step.body ? (
 				<div
 					style={{
-						marginTop: 18,
-						fontSize: 30,
+						marginTop: 20,
+						fontSize: 32,
 						lineHeight: 1.35,
 						color: B.muted,
 						opacity: Math.min(1, arrive(frame, sec(0.2), fps)),
@@ -151,7 +160,7 @@ const AddAppForm: React.FC<{frame: number}> = ({frame}) => {
 					width: 520,
 					height: 72,
 					borderRadius: 14,
-					background: B.surface,
+					...raised(B.blue, typing ? 0.6 : 0),
 					border: `2px solid ${typing ? B.accent : B.line}`,
 					display: 'flex',
 					alignItems: 'center',
@@ -214,16 +223,20 @@ const Counter: React.FC<{frame: number}> = ({frame}) => {
 				alignItems: 'center',
 				gap: 20,
 				padding: '16px 26px',
-				borderRadius: 18,
-				background: B.surface,
-				border: `2px solid ${B.line}`,
+				borderRadius: 20,
+				...raised(hosting > 0.5 ? B.green : B.pop, bump * 0.8),
 			}}
 		>
+			{/* The app's signature gesture: the coin turns over when credits land */}
+			<div style={{perspective: 400}}>
+				<CreditCoin size={48} rotateY={coinFlip((frame - last) / sec(0.42))} glow={bump} />
+			</div>
 			<div style={{display: 'flex', alignItems: 'baseline', gap: 10}}>
 				<span
 					style={{
-						fontSize: 56,
-						fontWeight: 700,
+						fontFamily: DISPLAY,
+						fontSize: 60,
+						fontWeight: 800,
 						color: B.text,
 						fontVariantNumeric: 'tabular-nums',
 						display: 'inline-block',
@@ -245,10 +258,10 @@ const Counter: React.FC<{frame: number}> = ({frame}) => {
 							top: 0,
 							fontSize: 24,
 							fontWeight: 700,
-							color: i === 0 ? B.accent : B.green,
+							color: i === 0 ? B.pop : B.green,
 							padding: '4px 12px',
 							borderRadius: 999,
-							background: `${i === 0 ? B.accent : B.green}22`,
+							background: alpha(i === 0 ? B.pop : B.green, 0.14),
 							whiteSpace: 'nowrap',
 							opacity: i === 0 ? 1 - hosting : hosting,
 						}}
@@ -257,6 +270,33 @@ const Counter: React.FC<{frame: number}> = ({frame}) => {
 					</span>
 				))}
 			</div>
+		</div>
+	);
+};
+
+/** Three segments above the panel: which step we're on, filling as it plays. */
+const StepProgress: React.FC<{frame: number}> = ({frame}) => {
+	const {fps} = useVideoConfig();
+	const show = arrive(frame, sec(0.1), fps);
+	return (
+		<div
+			style={{
+				position: 'absolute',
+				left: S.panel.x,
+				top: S.panel.top - 56,
+				display: 'flex',
+				gap: 10,
+				opacity: Math.min(1, show),
+			}}
+		>
+			{S.steps.map((st) => {
+				const fill = progress(frame, sec(st.start), sec(st.dur));
+				return (
+					<div key={st.n} style={{width: 96, height: 6, borderRadius: 3, background: B.line, overflow: 'hidden'}}>
+						<div style={{width: `${fill * 100}%`, height: '100%', background: brandGlow(90), boxShadow: `0 0 10px ${B.blue}`}} />
+					</div>
+				);
+			})}
 		</div>
 	);
 };

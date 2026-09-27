@@ -1,43 +1,47 @@
 import React from 'react';
 import {CONFIG} from '../config';
 import {SANS} from '../fonts';
+import {alpha} from '../motion';
 import {NodeId} from '../network/layout';
+import {brandFill} from '../style';
 import {SiteIcon} from './SiteIcon';
 
 const B = CONFIG.brand;
 
-/** One-line ad: source icon + copy + tiny "Ad" tag. */
-export const AdCard: React.FC<{source: NodeId; text: string}> = ({source, text}) => (
+/** One-line ad: source icon + copy + tiny "Ad" tag. `glow` tints its halo. */
+export const AdCard: React.FC<{source: NodeId; text: string; glow?: string}> = ({source, text, glow = B.blue}) => (
 	<div
 		style={{
 			display: 'flex',
 			alignItems: 'center',
-			gap: 9,
-			padding: '8px 12px 8px 8px',
-			borderRadius: 12,
+			gap: 10,
+			padding: '9px 12px 9px 9px',
+			borderRadius: 14,
 			background: B.adBg,
 			color: B.adText,
 			fontFamily: SANS,
-			fontWeight: 500,
-			fontSize: 17,
+			fontWeight: 600,
+			fontSize: 18,
+			letterSpacing: '-0.01em',
 			whiteSpace: 'nowrap',
 			maxWidth: CONFIG.network.adCard.maxW,
-			boxShadow: '0 8px 20px rgba(0,0,0,0.35)',
+			boxShadow: `0 0 0 1px ${alpha('#FFFFFF', 0.6)}, 0 0 32px ${alpha(glow, 0.55)}, 0 10px 24px rgba(0,0,0,0.45)`,
 		}}
 	>
-		<SiteIcon id={source} size={24} />
+		<SiteIcon id={source} size={26} />
 		<span style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>{text}</span>
 		<span
 			style={{
 				fontSize: 11,
 				fontWeight: 700,
-				padding: '2px 6px',
+				padding: '3px 7px',
 				borderRadius: 6,
-				background: B.accent,
-				color: B.adText,
+				background: brandFill(),
+				color: '#FFFFFF',
+				letterSpacing: '0.04em',
 			}}
 		>
-			Ad
+			AD
 		</span>
 	</div>
 );
