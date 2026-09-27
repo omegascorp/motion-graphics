@@ -10,7 +10,9 @@ npm run render   # → out/c4c-promo.mp4
 
 ## Before rendering
 
-- Drop the assets into `public/`: `icon.svg`, `wordmark-on-dark.svg`, `icon-1.png` … `icon-6.png`
+- `public/icon.svg` and `public/wordmark-on-dark.svg` are copied from the c4c.club app (`public/brand/`).
+- Member sites render as monogram tiles. To use a real icon, drop it into `public/` and set `icon: '<file>'`
+  on that site in `CONFIG.network.sites`.
   (`screenshot-home.png` / `screenshot-dashboard.png` are listed in CONFIG but not used by any scene).
 - Brand colours in `src/config.ts` → `CONFIG.brand` are placeholders. Replace `bg`, `accent`, `text`, `muted`.
 - The font is DM Sans as a placeholder. Swap the import in `src/fonts.ts`.

@@ -61,14 +61,15 @@ export const CONFIG = {
 		adCard: {maxW: 400},
 		curvature: 0.14, // control-point offset as a fraction of edge length
 		// angle: degrees, 0 = right, 90 = down. radius: multiplier on ring.
+		// icon: a file in public/ (e.g. 'icon-1.png'), or null → monogram tile.
 		sites: [
-			{id: 's1', angle: -150, radius: 1, nudge: [-10, 14], icon: 'icon-1.png', name: 'Pagecraft', domain: 'pagecraft.io', ad: 'Landing pages in an afternoon.'},
-			{id: 's2', angle: -88, radius: 1, nudge: [18, 0], icon: 'icon-2.png', name: 'Tallyho', domain: 'tallyho.app', ad: 'Invoices that chase themselves.'},
-			{id: 's3', angle: -28, radius: 1, nudge: [8, 22], icon: 'icon-3.png', name: 'Mapnook', domain: 'mapnook.co', ad: 'Maps for tiny shops.'},
-			{id: 's4', angle: 32, radius: 1, nudge: [-6, -8], icon: 'icon-4.png', name: 'Quillbox', domain: 'quillbox.so', ad: "A newsletter you'll send."},
-			{id: 's5', angle: 92, radius: 1, nudge: [-24, 0], icon: 'icon-5.png', name: 'Sprout', domain: 'sprout.fyi', ad: 'A CRM for CRM haters.'},
-			{id: 's6', angle: 148, radius: 1, nudge: [12, -16], icon: 'icon-6.png', name: 'Loopdesk', domain: 'loopdesk.dev', ad: 'Standups, minus the meeting.'},
-			// Extra members that join in the social-proof scene (no icon asset → monogram)
+			{id: 's1', angle: -150, radius: 1, nudge: [-10, 14], icon: null, monogram: 'P', monogramColor: '#E0655A', name: 'Pagecraft', domain: 'pagecraft.io', ad: 'Landing pages in an afternoon.'},
+			{id: 's2', angle: -88, radius: 1, nudge: [18, 0], icon: null, monogram: 'T', monogramColor: '#2FA37A', name: 'Tallyho', domain: 'tallyho.app', ad: 'Invoices that chase themselves.'},
+			{id: 's3', angle: -28, radius: 1, nudge: [8, 22], icon: null, monogram: 'M', monogramColor: '#3A9BD9', name: 'Mapnook', domain: 'mapnook.co', ad: 'Maps for tiny shops.'},
+			{id: 's4', angle: 32, radius: 1, nudge: [-6, -8], icon: null, monogram: 'Q', monogramColor: '#C9852E', name: 'Quillbox', domain: 'quillbox.so', ad: "A newsletter you'll send."},
+			{id: 's5', angle: 92, radius: 1, nudge: [-24, 0], icon: null, monogram: 'S', monogramColor: '#5DAA3C', name: 'Sprout', domain: 'sprout.fyi', ad: 'A CRM for CRM haters.'},
+			{id: 's6', angle: 148, radius: 1, nudge: [12, -16], icon: null, monogram: 'L', monogramColor: '#D5578E', name: 'Loopdesk', domain: 'loopdesk.dev', ad: 'Standups, minus the meeting.'},
+			// Extra members that join in the social-proof scene
 			{id: 's7', angle: 180, radius: 1.46, nudge: [0, -30], icon: null, monogram: 'K', monogramColor: '#6C8CFF', name: 'Kiln', domain: 'kiln.studio', ad: 'Pottery class bookings, sorted.'},
 			{id: 's8', angle: 0, radius: 1.46, nudge: [0, 26], icon: null, monogram: 'N', monogramColor: '#B07CFF', name: 'Nimbus', domain: 'nimbus.page', ad: 'Notes that write back.'},
 		],
