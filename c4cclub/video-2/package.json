@@ -1,0 +1,24 @@
+{
+  "name": "c4cclub-video-2",
+  "version": "1.0.0",
+  "private": true,
+  "description": "c4c.club referral program — 30s Remotion composition",
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render C4CReferral out/c4c-referral.mp4",
+    "still": "remotion still C4CReferral out/still.png",
+    "typecheck": "tsc --noEmit",
+    "audio": "python3 scripts/make-audio.py"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.529",
+    "@remotion/google-fonts": "4.0.529",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "4.0.529"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "typescript": "^5.6.3"
+  }
+}
